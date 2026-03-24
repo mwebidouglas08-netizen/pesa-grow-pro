@@ -1,37 +1,201 @@
 <!DOCTYPE html>
-<html>
+
+<html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pesa Grow</title>
+
+<!-- Google Font -->
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: #0b0f14;
+    color: white;
+}
+
+/* NAVBAR */
+nav {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 40px;
+    align-items: center;
+}
+
+.logo {
+    font-weight: 700;
+    color: #00ff9f;
+    font-size: 20px;
+}
+
+button {
+    background: #00ff9f;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* HERO */
+.hero {
+    display: flex;
+    justify-content: space-between;
+    padding: 60px;
+    align-items: center;
+}
+
+.hero-text h1 {
+    font-size: 50px;
+    line-height: 1.2;
+}
+
+.green {
+    color: #00ff9f;
+}
+
+.card {
+    background: #111827;
+    padding: 20px;
+    border-radius: 15px;
+    width: 300px;
+    box-shadow: 0 0 30px rgba(0,255,159,0.1);
+}
+
+/* FORM */
+.form {
+    margin-top: 30px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 8px;
+    border: none;
+}
+
+.status {
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+/* DASHBOARD */
+.dashboard {
+    padding: 40px;
+}
+
+.balance {
+    font-size: 30px;
+    color: #00ff9f;
+}
+
+</style>
+
 </head>
+
 <body>
-<h2>Deposit</h2>
-<input id="phone" placeholder="Phone"/>
-<input id="amount" placeholder="Amount"/>
-<button onclick="pay()">Pay</button>
-<p id="status"></p>
+
+<nav>
+    <div class="logo">PG Pesa Grow</div>
+    <button onclick="scrollToForm()">Get Started</button>
+</nav>
+
+<section class="hero">
+    <div class="hero-text">
+        <h1>
+            Make Your <span class="green">Money Work</span><br>
+            24/7 For You
+        </h1>
+        <p>Invest and earn daily profits instantly.</p>
+
+```
+    <button onclick="scrollToForm()">Start Investing</button>
+</div>
+
+<div class="card">
+    <h3>Live Portfolio</h3>
+    <div class="balance" id="balance">KES 0</div>
+    <p>Daily Profit: <span class="green" id="profit">KES 0</span></p>
+</div>
+```
+
+</section>
+
+<section class="dashboard">
+    <h2>Deposit Funds</h2>
+
+```
+<div class="form">
+    <input id="phone" placeholder="Phone (2547...)" />
+    <input id="amount" placeholder="Amount (KES)" />
+    <button onclick="pay()">Deposit via M-Pesa</button>
+    <div class="status" id="status"></div>
+</div>
+```
+
+</section>
 
 <script>
+let userBalance = 0;
+
+// Scroll
+function scrollToForm(){
+    window.scrollTo({top: 600, behavior: 'smooth'});
+}
+
+// Deposit
 async function pay(){
     const phone = document.getElementById('phone').value;
     const amount = document.getElementById('amount').value;
 
-    const res = await fetch('http://localhost:3000/stkpush',{
+    const res = await fetch('/stkpush',{
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body: JSON.stringify({phone,amount})
     });
 
     const data = await res.json();
-    checkStatus(data.id);
+    checkStatus(data.id, amount);
 }
 
-async function checkStatus(id){
-    setInterval(async ()=>{
-        const res = await fetch('http://localhost:3000/status/'+id);
+// Check payment
+async function checkStatus(id, amount){
+    const interval = setInterval(async ()=>{
+        const res = await fetch('/status/' + id);
         const data = await res.json();
-        document.getElementById('status').innerText = data.status;
+
+        document.getElementById('status').innerText = "Status: " + data.status;
+
+        if(data.status === "success"){
+            clearInterval(interval);
+
+            // Update balance
+            userBalance += Number(amount);
+            updateDashboard();
+        }
     },2000);
 }
+
+// Live profit simulation
+setInterval(()=>{
+    if(userBalance > 0){
+        let profit = userBalance * 0.02; // 2% simulation
+        userBalance += profit;
+        updateDashboard();
+    }
+},5000);
+
+// Update UI
+function updateDashboard(){
+    document.getElementById('balance').innerText = "KES " + Math.floor(userBalance);
+    document.getElementById('profit').innerText = "KES " + Math.floor(userBalance * 0.02);
+}
 </script>
+
 </body>
 </html>
