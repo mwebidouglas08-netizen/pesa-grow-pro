@@ -96,3 +96,12 @@ setInterval(async ()=>{
 
     console.log("Profits updated...");
 }, 60000); // every 1 min (simulate daily)
+const plans = [
+    { name: "Starter", min: 1000, rate: 0.02 },
+    { name: "Pro", min: 5000, rate: 0.05 },
+    { name: "VIP", min: 10000, rate: 0.1 }
+];
+
+app.get('/plans', (req,res)=>{
+    res.json(plans);
+});
