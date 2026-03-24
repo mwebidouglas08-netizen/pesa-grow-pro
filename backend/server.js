@@ -122,3 +122,10 @@ async function login(){
 
     loadDashboard();
 }
+async function loadDashboard(){
+    const res = await fetch('/user/' + currentUser.phone);
+    const user = await res.json();
+
+    document.getElementById('balance').innerText = "KES " + user.balance;
+    document.getElementById('profit').innerText = "KES " + user.profit;
+}
