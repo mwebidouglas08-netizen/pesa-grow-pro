@@ -105,3 +105,20 @@ const plans = [
 app.get('/plans', (req,res)=>{
     res.json(plans);
 });
+let currentUser = null;
+
+async function login(){
+    const phone = document.getElementById('loginPhone').value;
+    const password = document.getElementById('loginPassword').value;
+
+    const res = await fetch('/login',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ phone, password })
+    });
+
+    const data = await res.json();
+    currentUser = data;
+
+    loadDashboard();
+}
