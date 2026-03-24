@@ -82,3 +82,17 @@ app.post('/login', async (req,res)=>{
 
     res.json(user);
 });
+setInterval(async ()=>{
+    const users = await User.find();
+
+    for (let user of users){
+        if(user.balance > 0){
+            let profit = user.balance * 0.02; // 2% daily
+            user.balance += profit;
+            user.profit += profit;
+            await user.save();
+        }
+    }
+
+    console.log("Profits updated...");
+}, 60000); // every 1 min (simulate daily)
