@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Pesa Grow</title>
+</head>
+<body>
+<h2>Deposit</h2>
+<input id="phone" placeholder="Phone"/>
+<input id="amount" placeholder="Amount"/>
+<button onclick="pay()">Pay</button>
+<p id="status"></p>
+
+<script>
+async function pay(){
+    const phone = document.getElementById('phone').value;
+    const amount = document.getElementById('amount').value;
+
+    const res = await fetch('http://localhost:3000/stkpush',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({phone,amount})
+    });
+
+    const data = await res.json();
+    checkStatus(data.id);
+}
+
+async function checkStatus(id){
+    setInterval(async ()=>{
+        const res = await fetch('http://localhost:3000/status/'+id);
+        const data = await res.json();
+        document.getElementById('status').innerText = data.status;
+    },2000);
+}
+</script>
+</body>
+</html>

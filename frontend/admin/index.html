@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Dashboard</title>
+</head>
+<body>
+<h2>Transactions</h2>
+<ul id="list"></ul>
+
+<script>
+async function load(){
+    const res = await fetch('http://localhost:3000/transactions');
+    const data = await res.json();
+
+    const list = document.getElementById('list');
+    list.innerHTML = "";
+    data.forEach(tx=>{
+        const li = document.createElement('li');
+        li.innerText = tx.phone + " - " + tx.amount + " - " + tx.status;
+        list.appendChild(li);
+    });
+}
+
+setInterval(load,3000);
+</script>
+</body>
+</html>
