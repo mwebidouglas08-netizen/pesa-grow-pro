@@ -62,3 +62,23 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, ()=>{
     console.log(`Server running on port ${PORT}`);
 });
+const User = require('./models/User');
+
+// REGISTER
+app.post('/register', async (req,res)=>{
+    const { phone, password } = req.body;
+
+    const user = await User.create({ phone, password });
+    res.json(user);
+});
+
+// LOGIN
+app.post('/login', async (req,res)=>{
+    const { phone, password } = req.body;
+
+    const user = await User.findOne({ phone, password });
+
+    if(!user) return res.status(400).json({ error: "Invalid login" });
+
+    res.json(user);
+});
