@@ -2,16 +2,26 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 
+// ✅ MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)
 .then(()=>console.log("MongoDB connected"))
 .catch(err=>console.log(err));
 
+// ✅ Model
 const Transaction = require('./models/Transaction');
+
+// ✅ Serve frontend (IMPORTANT FOR RAILWAY)
+app.use(express.static(path.join(__dirname, '../frontend')));
+
+// ✅ Routes
 
 app.post('/stkpush', async (req,res)=>{
     const { phone, amount } = req.body;
@@ -22,7 +32,7 @@ app.post('/stkpush', async (req,res)=>{
         status: "pending"
     });
 
-    // Simulated STK push (replace with Safaricom API)
+    // Simulated success
     setTimeout(async ()=>{
         tx.status = "success";
         await tx.save();
@@ -41,4 +51,14 @@ app.get('/transactions', async (req,res)=>{
     res.json(txs);
 });
 
-app.listen(3000, ()=>console.log("Server running on 3000"));
+// ✅ Default route (IMPORTANT)
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/index.html'));
+});
+
+// ✅ Railway PORT FIX
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, ()=>{
+    console.log(`Server running on port ${PORT}`);
+});
