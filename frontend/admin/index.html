@@ -6,6 +6,10 @@
 <body>
 <h2>Transactions</h2>
 <ul id="list"></ul>
+    app.get('/admin/users', async (req,res)=>{
+    const users = await User.find();
+    res.json(users);
+});
 
 <script>
 async function load(){
